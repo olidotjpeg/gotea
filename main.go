@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 type Origin struct {
@@ -29,7 +30,7 @@ var Teas []Tea
 func generateTeas() {
 	Teas = []Tea{
 		Tea{
-			Id: "1",
+			Id: uuid.NewString(),
 			Origin: Origin{
 				ShopName:     "AC Perchs",
 				ShopLocation: "Copenhagen",
@@ -41,7 +42,7 @@ func generateTeas() {
 			BrewingDuration: 120,
 		},
 		Tea{
-			Id: "2",
+			Id: uuid.NewString(),
 			Origin: Origin{
 				ShopName:     "Edeka Zurheide",
 				ShopLocation: "Düsseldorf",
@@ -78,6 +79,7 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
 	var tea Tea
+	tea.Id = uuid.NewString()
 	json.Unmarshal(reqBody, &tea)
 
 	Teas = append(Teas, tea)

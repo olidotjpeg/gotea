@@ -90,20 +90,20 @@ func updateTea(w http.ResponseWriter, r *http.Request) {
 	routeVariables := mux.Vars(r)
 	id := routeVariables["id"]
 
-	var updatedEvent Tea
+	var updatedTea Tea
 
 	reqBody, _ := ioutil.ReadAll(r.Body)
-	json.Unmarshal(reqBody, &updatedEvent)
+	json.Unmarshal(reqBody, &updatedTea)
 	for i, tea := range Teas {
 		if tea.Id == id {
 
-			tea.Temperature = updatedEvent.Temperature
-			tea.PortionWeight = updatedEvent.PortionWeight
-			tea.InitialWeight = updatedEvent.InitialWeight
-			tea.ContainerWeight = updatedEvent.ContainerWeight
-			tea.BrewingDuration = updatedEvent.BrewingDuration
-			tea.Origin.ShopLocation = updatedEvent.Origin.ShopLocation
-			tea.Origin.ShopName = updatedEvent.Origin.ShopName
+			tea.Temperature = updatedTea.Temperature
+			tea.PortionWeight = updatedTea.PortionWeight
+			tea.InitialWeight = updatedTea.InitialWeight
+			tea.ContainerWeight = updatedTea.ContainerWeight
+			tea.BrewingDuration = updatedTea.BrewingDuration
+			tea.Origin.ShopLocation = updatedTea.Origin.ShopLocation
+			tea.Origin.ShopName = updatedTea.Origin.ShopName
 
 			Teas[i] = tea
 

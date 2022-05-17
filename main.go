@@ -9,13 +9,6 @@ import (
 	"net/http"
 )
 
-type Article struct {
-	Id      string `json:"Id"`
-	Title   string `json:"Title"`
-	Desc    string `json:"desc"`
-	Content string `json:"content"`
-}
-
 type Origin struct {
 	ShopName     string `json:"shopName"`
 	ShopLocation string `json:"shopLocation"`
@@ -73,7 +66,7 @@ func getTeas(w http.ResponseWriter, r *http.Request){
 func returnSingleTea(w http.ResponseWriter, r *http.Request) {
 	routeVariables := mux.Vars(r)
 	key := routeVariables["id"]
-	
+
 	for _, tea := range Teas {
 		if tea.Id == key {
 			json.NewEncoder(w).Encode(tea)

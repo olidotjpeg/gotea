@@ -73,10 +73,7 @@ func getTeas(w http.ResponseWriter, r *http.Request){
 func returnSingleTea(w http.ResponseWriter, r *http.Request) {
 	routeVariables := mux.Vars(r)
 	key := routeVariables["id"]
-
-	// Loop over all of our Articles
-	// if the article.Id equals the key we pass in
-	// return the article encoded as JSON
+	
 	for _, tea := range Teas {
 		if tea.Id == key {
 			json.NewEncoder(w).Encode(tea)
@@ -86,18 +83,20 @@ func returnSingleTea(w http.ResponseWriter, r *http.Request) {
 
 func createNewTea(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
+
 	var tea Tea
 	json.Unmarshal(reqBody, &tea)
 
 	Teas = append(Teas, tea)
-
 	json.NewEncoder(w).Encode(tea)
 }
 
 func updateTea(w http.ResponseWriter, r *http.Request) {
 	routeVariables := mux.Vars(r)
 	id := routeVariables["id"]
+
 	var updatedEvent Tea
+
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &updatedEvent)
 	for i, tea := range Teas {
@@ -120,7 +119,6 @@ func updateTea(w http.ResponseWriter, r *http.Request) {
 
 func deleteTea(w http.ResponseWriter, r *http.Request) {
 	routeVariables := mux.Vars(r)
-
 	id := routeVariables["id"]
 
 	for index, tea := range Teas {

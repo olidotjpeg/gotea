@@ -202,7 +202,7 @@ func handleRequests() {
 }
 
 func main() {
-	fmt.Println("Rest API v2.0 - Mux Routers")
+	fmt.Println("Server is live on port 8000")
 	generateTeas()
 	handleRequests()
 }

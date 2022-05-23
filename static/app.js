@@ -12,15 +12,6 @@ function loadData() {
             document.getElementById('temperature').innerText = `${data.temperature}°C`;
             document.getElementById('brewTime').innerText = `${data.brewingDuration}min`;
             document.getElementById('portionWeight').innerText = `${data.portionWeight}g/l`;
-
-            var qrcode = new QRCode("qrcode", {
-                text: window.location.href,
-                width: 128,
-                height: 128,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
         });
 }
 
@@ -36,17 +27,6 @@ function expandMenu() {
 }
 
 loadData();
-
-function createQrCode() {
-    new QRCode("qrcode", {
-        text: window.location.href,
-        width: 128,
-        height: 128,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
-}
 
 function debugTeas() {
     fetch(`http://localhost:8000/teas`)

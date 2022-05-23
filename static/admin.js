@@ -13,9 +13,11 @@ function buildList(teas) {
         const linkElem = document.createElement('a');
         linkElem.href = `/${tea.id}`
         linkElem.innerText = tea.id;
+        linkElem.className = 'tea-link';
 
         const formElem = document.createElement('form');
         formElem.setAttribute('onsubmit', 'doPUT(event)')
+        formElem.className = 'admin-form'
 
         const hiddenInput = document.createElement('input');
         hiddenInput.setAttribute('type', 'hidden');
@@ -79,12 +81,25 @@ function buildList(teas) {
             submitInput
         );
 
+        const qrCodeElement = document.createElement('div');
+        qrCodeElement.className = 'qrcode';
+        new QRCode(qrCodeElement, {
+            text: `${window.location.origin}/${tea.id}`,
+            width: 128,
+            height: 128,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
         liElem.append(
             linkElem,
             formElem,
+            qrCodeElement
         );
 
         listElem.appendChild(liElem);
+
     })
 }
 
@@ -98,15 +113,19 @@ function doPUT(event) {
                 "shopName": event.target.elements.shopName.value,
                 "shopLocation": event.target.elements.shopLocation.value
             },
-            "temperature": event.target.elements.temperature.value,
-            "portionWeight": event.target.elements.portionWeight.value,
-            "containerWeight": event.target.elements.containerWeight.value,
-            "initialWeight": event.target.elements.initialWeight.value,
-            "brewingDuration": event.target.elements.brewingDuration.value,
+            "temperature": parseInt(event.target.elements.temperature.value),
+            "portionWeight": parseInt(event.target.elements.portionWeight.value),
+            "containerWeight": parseInt(event.target.elements.containerWeight.value),
+            "initialWeight": parseInt(event.target.elements.initialWeight.value),
+            "brewingDuration": parseInt(event.target.elements.brewingDuration.value),
             "teaName": event.target.elements.teaName.value
         })
     };
     fetch(`/tea/${event.target.elements.teaId.value}`, requestOptions)
         .then(response => response.json())
         .then(data => console.log(data) );
+}
+
+function createNewTea() {
+    console.log('tea');
 }

@@ -4,15 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Admin View</title>
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <h1>This is the admin view</h1>
 
-    <ul id="tea-list">
+    <div class="wrapper">
+        <header class="header">
+            <h1>GoTea Admin 😎</h1>
+        </header>
 
-    </ul>
+        <ul id="tea-list">
+
+        </ul>
+
+
+        <form onsubmit="createNewTea()">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="submit">
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.js" integrity="sha512-is1ls2rgwpFZyixqKFEExPHVUUL+pPkBEPw47s/6NDQ4n1m6T/ySeDW3p54jp45z2EJ0RSOgilqee1WhtelXfA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="admin.js"></script>
 </body>
 </html>

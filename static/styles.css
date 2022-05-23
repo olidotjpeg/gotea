@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+.wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.background {
+    position: absolute;
+    width: 110%;
+    height: 110%;
+    top: -20px;
+    left: -20px;
+    right: 0;
+    bottom: 0;
+
+    background-image: url("https://images.unsplash.com/photo-1561296180-e8100fd714e2?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2734");
+    filter: blur(10px);
+}
+
+.tea-card {
+    width: 410px;
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 19px 16px;
+
+    background: #FFFFFF;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .14), 0 2px 1px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .2);
+    border-radius: 4px;
+}
+
+.tea-card h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.tea-meta {
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    color: rgba(0, 0, 0, .6)
+}
+
+.tea-picture {
+    width: 100%;
+    padding: 0 29px;
+}
+
+.tea-guide {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tea-guide li {
+    display: flex;
+    align-items: center;
+}
+
+.expand-element span {
+    display: block;
+    height: 0;
+    opacity: 0;
+    transition: height ease-in-out .3s, opacity ease-in-out .3s;
+}
+
+.expand-element.expanded span {
+    height: 50px;
+    opacity: 1;
+}
+
+#qrcode {
+    height: 0;
+    opacity: 0;
+}
+
+.expand-element.expanded #qrcode {
+    height: 128px;
+    opacity: 1;
+}
+
+.footer-content {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+}

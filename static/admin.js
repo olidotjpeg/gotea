@@ -126,6 +126,8 @@ function doPUT(event) {
         .then(data => console.log(data) );
 }
 
-function createNewTea() {
-    console.log('tea');
+function createNewTea(event) {
+    event.preventDefault();
+
+    console.log(event);
 }

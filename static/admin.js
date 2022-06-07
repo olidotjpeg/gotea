@@ -128,6 +128,29 @@ function doPUT(event) {
 
 function createNewTea(event) {
     event.preventDefault();
+    const postForm = document.getElementById('postForm');
+    const formedData = new FormData(postForm)
+    let postObj = {};
+    let origin = {};
 
-    console.log(event);
+    for (const [key, value] of formedData) {
+        if(key === 'shopName' || key === 'shopLocation') {
+            origin[key] = value;
+            postObj.origin = origin;
+        } else {
+            postObj[key] = value;
+        }
+    }
+
+    console.log(postObj);
+
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postObj)
+    };
+
+    fetch('/tea', requestOptions)
+        .then(response => response.json())
+        .then(data => console.log(data) );
 }

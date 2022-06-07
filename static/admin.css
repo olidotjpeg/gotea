@@ -17,7 +17,7 @@
     padding-left: 24px;
 }
 
-#tea-list {
+.container {
     max-width: 310px;
     margin: 0 auto;
 }

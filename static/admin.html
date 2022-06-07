@@ -14,22 +14,25 @@
             <h1>GoTea Admin 😎</h1>
         </header>
 
-        <ul id="tea-list">
+        <div class="container">
+            <ul id="tea-list">
 
-        </ul>
+            </ul>
+        </div>
 
-
-        <form onsubmit="createNewTea(event)" class="admin-form">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="submit">
-        </form>
+        <div class="container">
+            <form onsubmit="createNewTea(event)" class="admin-form" id="postForm">
+                <input name="teaName" placeholder="Tea Name" type="text">
+                <input name="shopName" placeholder="Shop Name" type="text">
+                <input name="shopLocation" placeholder="Shop Location" type="text">
+                <input name="temperature" placeholder="Temperature" type="text">
+                <input name="portionWeight" placeholder="Portion Weight" type="text">
+                <input name="containerWeight" placeholder="Container Weight" type="text">
+                <input name="initialWeight" placeholder="Initial Weight" type="text">
+                <input name="brewingDuration" placeholder="Brewing Duration (In Seconds)" type="text">
+                <input type="submit">
+            </form>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.js" integrity="sha512-is1ls2rgwpFZyixqKFEExPHVUUL+pPkBEPw47s/6NDQ4n1m6T/ySeDW3p54jp45z2EJ0RSOgilqee1WhtelXfA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

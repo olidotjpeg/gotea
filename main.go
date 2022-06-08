@@ -57,20 +57,19 @@ func getTeas(w http.ResponseWriter, r *http.Request) {
 }
 
 func returnSingleTea(w http.ResponseWriter, r *http.Request) {
-	// @TODO fix so this returns a Json Encoding struct
 	routeVariables := mux.Vars(r)
 	key := routeVariables["id"]
 
-	sqlQuery := fmt.Sprintf(`SELECT id, teaName FROM teas WHERE id = '%s'`, key)
+	sqlQuery := fmt.Sprintf(`SELECT * FROM teas WHERE id = '%s'`, key)
 
 	row := database.QueryRow(sqlQuery)
-	var id string
-	var teaName string
-	err := row.Scan(&id, &teaName)
+	var tea Tea
+	err := row.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(id, teaName)
+
+	json.NewEncoder(w).Encode(tea)
 }
 
 func createNewTea(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +95,6 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTea(w http.ResponseWriter, r *http.Request) {
-	// @TODO turn this into a call to the sql database
 	routeVariables := mux.Vars(r)
 	id := routeVariables["id"]
 
@@ -115,17 +113,12 @@ func updateTea(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTea(w http.ResponseWriter, r *http.Request) {
-	// @TODO turn this into a call to the sql database
-	//routeVariables := mux.Vars(r)
-	//id := routeVariables["id"]
-	//
-	//for index, tea := range Teas {
-	//	if tea.Id == id {
-	//		Teas = append(Teas[:index], Teas[index+1:]...)
-	//	}
-	//}
-	//
-	//json.NewEncoder(w).Encode(Teas)
+	routeVariables := mux.Vars(r)
+	id := routeVariables["id"]
+
+	database.Exec("DELETE FROM teas WHERE id = ?", id)
+
+	json.NewEncoder(w).Encode("Teas Deleted")
 }
 
 // spaHandler implements the http.Handler interface, so we can use it

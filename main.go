@@ -94,6 +94,7 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTea(w http.ResponseWriter, r *http.Request) {
+	// @TODO turn this into a call to the sql database
 	//routeVariables := mux.Vars(r)
 	//id := routeVariables["id"]
 	//
@@ -121,6 +122,7 @@ func updateTea(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTea(w http.ResponseWriter, r *http.Request) {
+	// @TODO turn this into a call to the sql database
 	//routeVariables := mux.Vars(r)
 	//id := routeVariables["id"]
 	//

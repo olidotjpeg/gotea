@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
@@ -32,6 +34,7 @@ type Tea struct {
 }
 
 var Teas []Tea
+var database *sql.DB
 
 func generateTeas() {
 	Teas = []Tea{
@@ -67,18 +70,37 @@ func generateTeas() {
 }
 
 func getTeas(w http.ResponseWriter, r *http.Request){
-	json.NewEncoder(w).Encode(Teas)
+	// json.NewEncoder(w).Encode(Teas)
+	rows, err := database.Query("SELECT id, teaName FROM teas")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id string
+		var teaName string
+		err = rows.Scan(&id, &teaName)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(id, teaName)
+	}
 }
 
 func returnSingleTea(w http.ResponseWriter, r *http.Request) {
 	routeVariables := mux.Vars(r)
 	key := routeVariables["id"]
 
-	for _, tea := range Teas {
-		if tea.Id == key {
-			json.NewEncoder(w).Encode(tea)
-		}
+	sqlQuery := fmt.Sprintf(`SELECT id, teaName FROM teas WHERE id = '%s'`, key)
+
+	row := database.QueryRow(sqlQuery)
+	var id string
+	var teaName string
+	err := row.Scan(&id, &teaName)
+	if err != nil {
+		log.Fatal(err)
 	}
+	fmt.Println(id, teaName)
 }
 
 func createNewTea(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +110,16 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 	tea.Id = uuid.NewString()
 	json.Unmarshal(reqBody, &tea)
 
-	Teas = append(Teas, tea)
+	sqlQuery := fmt.Sprintf(`INSERT INTO teas(id, teaName, brewingDuration) VALUES('%s', 'CoolTeaName', 123)`, tea.Id)
+
+	var err error
+
+	_, err = database.Exec(sqlQuery)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Teas = append(Teas, tea)
 	json.NewEncoder(w).Encode(tea)
 }
 
@@ -203,6 +234,15 @@ func handleRequests() {
 
 func main() {
 	fmt.Println("Server is live on port 8000")
+
+	var err error
+
+	database, err = sql.Open("sqlite3", "./gotea.sqlite")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer database.Close()
+
 	generateTeas()
 	handleRequests()
 }

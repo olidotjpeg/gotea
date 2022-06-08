@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -56,6 +57,7 @@ func getTeas(w http.ResponseWriter, r *http.Request) {
 }
 
 func returnSingleTea(w http.ResponseWriter, r *http.Request) {
+	// @TODO fix so this returns a Json Encoding struct
 	routeVariables := mux.Vars(r)
 	key := routeVariables["id"]
 
@@ -95,30 +97,21 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 
 func updateTea(w http.ResponseWriter, r *http.Request) {
 	// @TODO turn this into a call to the sql database
-	//routeVariables := mux.Vars(r)
-	//id := routeVariables["id"]
-	//
-	//var updatedTea Tea
-	//
-	//reqBody, _ := ioutil.ReadAll(r.Body)
-	//json.Unmarshal(reqBody, &updatedTea)
-	//for i, tea := range Teas {
-	//	if tea.Id == id {
-	//
-	//		tea.Temperature = updatedTea.Temperature
-	//		tea.PortionWeight = updatedTea.PortionWeight
-	//		tea.InitialWeight = updatedTea.InitialWeight
-	//		tea.ContainerWeight = updatedTea.ContainerWeight
-	//		tea.BrewingDuration = updatedTea.BrewingDuration
-	//		tea.Origin.ShopLocation = updatedTea.Origin.ShopLocation
-	//		tea.Origin.ShopName = updatedTea.Origin.ShopName
-	//		tea.TeaName = updatedTea.TeaName
-	//
-	//		Teas[i] = tea
-	//
-	//		json.NewEncoder(w).Encode(tea)
-	//	}
-	//}
+	routeVariables := mux.Vars(r)
+	id := routeVariables["id"]
+
+	var updatedTea Tea
+
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	json.Unmarshal(reqBody, &updatedTea)
+
+	sqlQuery := fmt.Sprintf(
+		`UPDATE teas SET teaName = '%s', teaType = '%s', shopName = '%s', shopLocation = '%s', temperature = '%d', portionWeight = '%d', containerWeight = '%d', initialWeight = '%d', brewingDuration = '%d' WHERE id = '%s'`,
+		updatedTea.TeaName, updatedTea.TeaType, updatedTea.Origin.ShopName, updatedTea.Origin.ShopLocation, updatedTea.Temperature, updatedTea.PortionWeight, updatedTea.ContainerWeight, updatedTea.InitialWeight, updatedTea.BrewingDuration, id)
+
+	database.Exec(sqlQuery)
+
+	json.NewEncoder(w).Encode(updatedTea)
 }
 
 func deleteTea(w http.ResponseWriter, r *http.Request) {

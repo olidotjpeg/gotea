@@ -2,12 +2,11 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"io/ioutil"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
 	"os"
@@ -15,76 +14,45 @@ import (
 	"time"
 )
 
-
 type Origin struct {
-	ShopName     string `json:"shopName"`
-	ShopLocation string `json:"shopLocation"`
+	ShopName     string `json:"shopName" sql:"ShopName"`
+	ShopLocation string `json:"shopLocation" sql:"ShopLocation"`
 }
 
 type Tea struct {
-	Id          string `json:"id"`
-	Origin        Origin `json:"origin"`
-	Temperature     int `json:"temperature"`
-	PortionWeight   int `json:"portionWeight"`
-	ContainerWeight int `json:"containerWeight"`
-	InitialWeight   int `json:"initialWeight"`
-	BrewingDuration int `json:"brewingDuration"`
-	TeaType string `json:"teaType"`
-	TeaName string `json:"teaName"`
+	Id              string `json:"id" sql:"Id"`
+	Origin          Origin `json:"origin" sql:"Origin"`
+	Temperature     int    `json:"temperature" sql:"Temperature"`
+	PortionWeight   int    `json:"portionWeight" sql:"PortionWeight"`
+	ContainerWeight int    `json:"containerWeight" sql:"ContainerWeight"`
+	InitialWeight   int    `json:"initialWeight" sql:"InitialWeight"`
+	BrewingDuration int    `json:"brewingDuration" sql:"BrewingDuration"`
+	TeaType         string `json:"teaType" sql:"TeaType"`
+	TeaName         string `json:"teaName" sql:"TeaName"`
 }
 
-var Teas []Tea
 var database *sql.DB
 
-func generateTeas() {
-	Teas = []Tea{
-		Tea{
-			Id: uuid.NewString(),
-			Origin: Origin{
-				ShopName:     "AC Perchs",
-				ShopLocation: "Copenhagen",
-			},
-			Temperature:     80,
-			PortionWeight:   10,
-			ContainerWeight: 95,
-			InitialWeight:   100,
-			BrewingDuration: 120,
-			TeaType: "Green Tea",
-			TeaName: "Organic Sencha Arata",
-		},
-		Tea{
-			Id: uuid.NewString(),
-			Origin: Origin{
-				ShopName:     "Edeka Zurheide",
-				ShopLocation: "Düsseldorf",
-			},
-			Temperature:     120,
-			PortionWeight:   50,
-			ContainerWeight: 35,
-			InitialWeight:   120,
-			BrewingDuration: 1000,
-			TeaType: "Green Tea",
-			TeaName: "AC Afternoon Tea",
-		},
-	}
-}
-
-func getTeas(w http.ResponseWriter, r *http.Request){
-	// json.NewEncoder(w).Encode(Teas)
-	rows, err := database.Query("SELECT id, teaName FROM teas")
+func getTeas(w http.ResponseWriter, r *http.Request) {
+	rows, err := database.Query("SELECT * FROM teas")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer rows.Close()
+
+	var teas []Tea
+
 	for rows.Next() {
-		var id string
-		var teaName string
-		err = rows.Scan(&id, &teaName)
+		var tea Tea
+		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType)
 		if err != nil {
-			log.Fatal(err)
+			return
 		}
-		fmt.Println(id, teaName)
+		teas = append(teas, tea)
 	}
+
+	json.NewEncoder(w).Encode(teas)
 }
 
 func returnSingleTea(w http.ResponseWriter, r *http.Request) {
@@ -104,13 +72,16 @@ func returnSingleTea(w http.ResponseWriter, r *http.Request) {
 }
 
 func createNewTea(w http.ResponseWriter, r *http.Request) {
-	reqBody, _ := ioutil.ReadAll(r.Body)
-
 	var tea Tea
 	tea.Id = uuid.NewString()
-	json.Unmarshal(reqBody, &tea)
 
-	sqlQuery := fmt.Sprintf(`INSERT INTO teas(id, teaName, brewingDuration) VALUES('%s', 'CoolTeaName', 123)`, tea.Id)
+	decoder := json.NewDecoder(r.Body)
+	decodeError := decoder.Decode(&tea)
+	if decodeError != nil {
+		panic(decodeError)
+	}
+
+	sqlQuery := fmt.Sprintf(`INSERT INTO teas(id, teaName, shopName, shopLocation, teaType, temperature, portionWeight, containerWeight, initialWeight, brewingDuration) VALUES('%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, %d)`, tea.Id, tea.TeaName, tea.Origin.ShopName, tea.Origin.ShopLocation, tea.TeaType, tea.Temperature, tea.PortionWeight, tea.ContainerWeight, tea.InitialWeight, tea.BrewingDuration)
 
 	var err error
 
@@ -119,48 +90,47 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	// Teas = append(Teas, tea)
 	json.NewEncoder(w).Encode(tea)
 }
 
 func updateTea(w http.ResponseWriter, r *http.Request) {
-	routeVariables := mux.Vars(r)
-	id := routeVariables["id"]
-
-	var updatedTea Tea
-
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	json.Unmarshal(reqBody, &updatedTea)
-	for i, tea := range Teas {
-		if tea.Id == id {
-
-			tea.Temperature = updatedTea.Temperature
-			tea.PortionWeight = updatedTea.PortionWeight
-			tea.InitialWeight = updatedTea.InitialWeight
-			tea.ContainerWeight = updatedTea.ContainerWeight
-			tea.BrewingDuration = updatedTea.BrewingDuration
-			tea.Origin.ShopLocation = updatedTea.Origin.ShopLocation
-			tea.Origin.ShopName = updatedTea.Origin.ShopName
-			tea.TeaName = updatedTea.TeaName
-
-			Teas[i] = tea
-
-			json.NewEncoder(w).Encode(tea)
-		}
-	}
+	//routeVariables := mux.Vars(r)
+	//id := routeVariables["id"]
+	//
+	//var updatedTea Tea
+	//
+	//reqBody, _ := ioutil.ReadAll(r.Body)
+	//json.Unmarshal(reqBody, &updatedTea)
+	//for i, tea := range Teas {
+	//	if tea.Id == id {
+	//
+	//		tea.Temperature = updatedTea.Temperature
+	//		tea.PortionWeight = updatedTea.PortionWeight
+	//		tea.InitialWeight = updatedTea.InitialWeight
+	//		tea.ContainerWeight = updatedTea.ContainerWeight
+	//		tea.BrewingDuration = updatedTea.BrewingDuration
+	//		tea.Origin.ShopLocation = updatedTea.Origin.ShopLocation
+	//		tea.Origin.ShopName = updatedTea.Origin.ShopName
+	//		tea.TeaName = updatedTea.TeaName
+	//
+	//		Teas[i] = tea
+	//
+	//		json.NewEncoder(w).Encode(tea)
+	//	}
+	//}
 }
 
 func deleteTea(w http.ResponseWriter, r *http.Request) {
-	routeVariables := mux.Vars(r)
-	id := routeVariables["id"]
-
-	for index, tea := range Teas {
-		if tea.Id == id {
-			Teas = append(Teas[:index], Teas[index+1:]...)
-		}
-	}
-
-	json.NewEncoder(w).Encode(Teas)
+	//routeVariables := mux.Vars(r)
+	//id := routeVariables["id"]
+	//
+	//for index, tea := range Teas {
+	//	if tea.Id == id {
+	//		Teas = append(Teas[:index], Teas[index+1:]...)
+	//	}
+	//}
+	//
+	//json.NewEncoder(w).Encode(Teas)
 }
 
 // spaHandler implements the http.Handler interface, so we can use it
@@ -216,18 +186,16 @@ func handleRequests() {
 	myRouter.HandleFunc("/tea/{id}", updateTea).Methods("PUT")
 	myRouter.HandleFunc("/tea/{id}", returnSingleTea)
 
-
 	spa := spaHandler{staticPath: "static", indexPath: "index.html"}
 	myRouter.PathPrefix("/").Handler(spa)
 
 	srv := &http.Server{
-		Handler:      myRouter,
-		Addr:         "0.0.0.0:8000",
+		Handler: myRouter,
+		Addr:    "0.0.0.0:8000",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-
 
 	log.Fatal(srv.ListenAndServe())
 }
@@ -243,6 +211,5 @@ func main() {
 	}
 	defer database.Close()
 
-	generateTeas()
 	handleRequests()
 }

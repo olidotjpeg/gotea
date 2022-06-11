@@ -6,7 +6,9 @@ fetch(`/teas`)
 
 
 function buildList(teas) {
-    console.log(teas);
+    if (!teas) {
+        return;
+    }
 
     teas.map((tea) => {
         const listElem = document.getElementById('tea-list')
@@ -36,28 +38,43 @@ function buildList(teas) {
         typeInput.setAttribute('name',"teaType");
         typeInput.setAttribute('value',`${tea.teaType}`);
 
+        const sizeInput = document.createElement('input');
+        sizeInput.setAttribute('type',"text");
+        sizeInput.setAttribute('name',"size");
+        sizeInput.setAttribute('value',`${tea.size}`);
+
+        const colorInput = document.createElement('input');
+        colorInput.setAttribute('type',"text");
+        colorInput.setAttribute('name',"color");
+        colorInput.setAttribute('value',`${tea.color}`);
+
+        const inUseInput = document.createElement('input');
+        inUseInput.setAttribute('type',"text");
+        inUseInput.setAttribute('name',"inUse");
+        inUseInput.setAttribute('value',`${tea.inUse}`);
+
         const temperatureInput = document.createElement('input');
-        temperatureInput.setAttribute('type',"text");
+        temperatureInput.setAttribute('type',"number");
         temperatureInput.setAttribute('name',"temperature");
         temperatureInput.setAttribute('value',`${tea.temperature}`);
 
         const portionWeightInput = document.createElement('input');
-        portionWeightInput.setAttribute('type',"text");
+        portionWeightInput.setAttribute('type',"number");
         portionWeightInput.setAttribute('name',"portionWeight");
         portionWeightInput.setAttribute('value', `${tea.portionWeight}`);
 
         const containerWeightInput = document.createElement('input');
-        containerWeightInput.setAttribute('type',"text");
+        containerWeightInput.setAttribute('type',"number");
         containerWeightInput.setAttribute('name',"containerWeight");
         containerWeightInput.setAttribute('value', `${tea.containerWeight}`);
 
         const initialWeightInput = document.createElement('input');
-        initialWeightInput.setAttribute('type',"text");
+        initialWeightInput.setAttribute('type',"number");
         initialWeightInput.setAttribute('name',"initialWeight");
         initialWeightInput.setAttribute('value', `${tea.initialWeight}`);
 
         const brewingDurationInput = document.createElement('input');
-        brewingDurationInput.setAttribute('type',"text");
+        brewingDurationInput.setAttribute('type',"number");
         brewingDurationInput.setAttribute('name',"brewingDuration");
         brewingDurationInput.setAttribute('value', `${tea.brewingDuration}`);
 
@@ -90,6 +107,9 @@ function buildList(teas) {
             brewingDurationInput,
             shopNameInput,
             shopLocationInput,
+            sizeInput,
+            colorInput,
+            inUseInput,
             submitInput,
             deleteButton,
             hiddenInput,
@@ -164,12 +184,13 @@ function createNewTea(event) {
         if(key === 'shopName' || key === 'shopLocation') {
             origin[key] = value;
             postObj.origin = origin;
+        }
+        if (key === 'temperature' || key === 'containerWeight' || key === 'initialWeight' || key === 'portionWeight' || key === 'brewingDuration' || key === 'inUse') {
+            postObj[key] = parseInt(value);
         } else {
             postObj[key] = value;
         }
     }
-
-    console.log(postObj);
 
     const requestOptions = {
         method: 'POST',

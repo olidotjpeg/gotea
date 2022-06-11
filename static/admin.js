@@ -29,6 +29,11 @@ function buildList(teas) {
         nameInput.setAttribute('name',"teaName");
         nameInput.setAttribute('value',`${tea.teaName}`);
 
+        const typeInput = document.createElement('input');
+        typeInput.setAttribute('type',"text");
+        typeInput.setAttribute('name',"teaType");
+        typeInput.setAttribute('value',`${tea.teaType}`);
+
         const temperatureInput = document.createElement('input');
         temperatureInput.setAttribute('type',"text");
         temperatureInput.setAttribute('name',"temperature");
@@ -70,7 +75,7 @@ function buildList(teas) {
 
         formElem.append(
             nameInput,
-            hiddenInput,
+            typeInput,
             temperatureInput,
             portionWeightInput,
             containerWeightInput,
@@ -78,7 +83,8 @@ function buildList(teas) {
             brewingDurationInput,
             shopNameInput,
             shopLocationInput,
-            submitInput
+            submitInput,
+            hiddenInput,
         );
 
         const qrCodeElement = document.createElement('div');

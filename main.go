@@ -30,6 +30,9 @@ type Tea struct {
 	BrewingDuration int    `json:"brewingDuration" sql:"BrewingDuration"`
 	TeaType         string `json:"teaType" sql:"TeaType"`
 	TeaName         string `json:"teaName" sql:"TeaName"`
+	Color           string `json:"color" sql:"Color"`
+	Size            string `json:"size" sql:"Size"`
+	InUse           int    `json:"inUse" sql:"InUse"`
 }
 
 var database *sql.DB
@@ -46,7 +49,7 @@ func getTeas(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var tea Tea
-		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType)
+		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size)
 		if err != nil {
 			return
 		}
@@ -64,7 +67,7 @@ func returnSingleTea(w http.ResponseWriter, r *http.Request) {
 
 	row := database.QueryRow(sqlQuery)
 	var tea Tea
-	err := row.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType)
+	err := row.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -82,7 +85,7 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 		panic(decodeError)
 	}
 
-	sqlQuery := fmt.Sprintf(`INSERT INTO teas(id, teaName, shopName, shopLocation, teaType, temperature, portionWeight, containerWeight, initialWeight, brewingDuration) VALUES('%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, %d)`, tea.Id, tea.TeaName, tea.Origin.ShopName, tea.Origin.ShopLocation, tea.TeaType, tea.Temperature, tea.PortionWeight, tea.ContainerWeight, tea.InitialWeight, tea.BrewingDuration)
+	sqlQuery := fmt.Sprintf(`INSERT INTO teas(id, teaName, shopName, shopLocation, temperature, portionWeight, containerWeight, initialWeight, brewingDuration, teaType, color, inUse, size) VALUES('%s', '%s', '%s', '%s', %d, %d, %d, %d, %d, '%s', '%s', %d, '%s')`, tea.Id, tea.TeaName, tea.Origin.ShopName, tea.Origin.ShopLocation, tea.Temperature, tea.PortionWeight, tea.ContainerWeight, tea.InitialWeight, tea.BrewingDuration, tea.TeaType, tea.Color, tea.InUse, tea.Size)
 
 	var err error
 

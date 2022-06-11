@@ -6,6 +6,8 @@ fetch(`/teas`)
 
 
 function buildList(teas) {
+    console.log(teas);
+
     teas.map((tea) => {
         const listElem = document.getElementById('tea-list')
         const liElem = document.createElement('li');
@@ -73,6 +75,11 @@ function buildList(teas) {
         submitInput.setAttribute('type',"submit");
         submitInput.setAttribute('value',"Submit");
 
+        const deleteButton = document.createElement('button');
+        deleteButton.innerText = 'Delete Tea';
+        deleteButton.setAttribute('onclick', `doDelete(event, '${tea.id}')`);
+        deleteButton.setAttribute('type', 'button');
+
         formElem.append(
             nameInput,
             typeInput,
@@ -84,6 +91,7 @@ function buildList(teas) {
             shopNameInput,
             shopLocationInput,
             submitInput,
+            deleteButton,
             hiddenInput,
         );
 
@@ -107,6 +115,19 @@ function buildList(teas) {
         listElem.appendChild(liElem);
 
     })
+}
+
+function doDelete(event, id) {
+    console.log(event, id);
+
+    event.preventDefault();
+    const requestOptions = {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+    };
+    fetch(`/tea/${id}`, requestOptions)
+        .then(response => response.json())
+        .then(data => console.log(data) );
 }
 
 function doPUT(event) {

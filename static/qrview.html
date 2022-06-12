@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>This view is only to get a list of QRs for print</h1>
+
+    <style>
+        #App {
+            display: flex;
+        }
+
+        #App div {
+            margin-right: 12px;
+        }
+    </style>
+
+    <div id="App"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.js" integrity="sha512-is1ls2rgwpFZyixqKFEExPHVUUL+pPkBEPw47s/6NDQ4n1m6T/ySeDW3p54jp45z2EJ0RSOgilqee1WhtelXfA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        fetch(`/teas`)
+            .then(response => response.json())
+            .then(data => {
+                data.map((tea) => {
+                    const renderTarget = document.getElementById('App');
+
+                    const renderElement = document.createElement('div');
+
+                    const nameElement = document.createElement('p');
+                    nameElement.innerText = tea.color;
+
+                    const qrCodeElement = document.createElement('div');
+                    qrCodeElement.className = 'qrcode';
+                    new QRCode(qrCodeElement, {
+                        text: `http://192.168.2.103:8000/${tea.id}`,
+                        width: 128,
+                        height: 128,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+
+                    renderElement.append(nameElement, qrCodeElement);
+                    renderTarget.append(renderElement);
+                })
+            });
+    </script>
+</body>
+</html>

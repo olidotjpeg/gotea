@@ -5,7 +5,6 @@ function loadData() {
     fetch(`/tea${teaLocation}`)
         .then(response => response.json())
         .then(data => {
-            // console.log(data);
             document.getElementById('teaType').innerText = data.teaType;
             document.getElementById('originShop').innerText = data.origin.shopName;
             document.getElementById('teaName').innerText = data.teaName;

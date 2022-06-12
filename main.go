@@ -21,18 +21,19 @@ type Origin struct {
 }
 
 type Tea struct {
-	Id              string `json:"id" sql:"Id"`
-	Origin          Origin `json:"origin" sql:"Origin"`
-	Temperature     int    `json:"temperature" sql:"Temperature"`
-	PortionWeight   int    `json:"portionWeight" sql:"PortionWeight"`
-	ContainerWeight int    `json:"containerWeight" sql:"ContainerWeight"`
-	InitialWeight   int    `json:"initialWeight" sql:"InitialWeight"`
-	BrewingDuration int    `json:"brewingDuration" sql:"BrewingDuration"`
-	TeaType         string `json:"teaType" sql:"TeaType"`
-	TeaName         string `json:"teaName" sql:"TeaName"`
-	Color           string `json:"color" sql:"Color"`
-	Size            string `json:"size" sql:"Size"`
-	InUse           int    `json:"inUse" sql:"InUse"`
+	Id               string `json:"id" sql:"Id"`
+	Origin           Origin `json:"origin" sql:"Origin"`
+	Temperature      int    `json:"temperature" sql:"Temperature"`
+	PortionWeight    int    `json:"portionWeight" sql:"PortionWeight"`
+	ContainerWeight  int    `json:"containerWeight" sql:"ContainerWeight"`
+	InitialWeight    int    `json:"initialWeight" sql:"InitialWeight"`
+	BrewingDuration  int    `json:"brewingDuration" sql:"BrewingDuration"`
+	TeaType          string `json:"teaType" sql:"TeaType"`
+	TeaName          string `json:"teaName" sql:"TeaName"`
+	Color            string `json:"color" sql:"Color"`
+	Size             string `json:"size" sql:"Size"`
+	InUse            int    `json:"inUse" sql:"InUse"`
+	BlendDescription string `json:"blendDescription" sql:"BlendDescription"`
 }
 
 var database *sql.DB
@@ -49,7 +50,7 @@ func getTeas(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var tea Tea
-		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size)
+		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size, &tea.BlendDescription)
 		if err != nil {
 			return
 		}
@@ -67,7 +68,7 @@ func returnSingleTea(w http.ResponseWriter, r *http.Request) {
 
 	row := database.QueryRow(sqlQuery)
 	var tea Tea
-	err := row.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size)
+	err := row.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size, &tea.BlendDescription)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -85,7 +86,7 @@ func createNewTea(w http.ResponseWriter, r *http.Request) {
 		panic(decodeError)
 	}
 
-	sqlQuery := fmt.Sprintf(`INSERT INTO teas(id, teaName, shopName, shopLocation, temperature, portionWeight, containerWeight, initialWeight, brewingDuration, teaType, color, inUse, size) VALUES('%s', '%s', '%s', '%s', %d, %d, %d, %d, %d, '%s', '%s', %d, '%s')`, tea.Id, tea.TeaName, tea.Origin.ShopName, tea.Origin.ShopLocation, tea.Temperature, tea.PortionWeight, tea.ContainerWeight, tea.InitialWeight, tea.BrewingDuration, tea.TeaType, tea.Color, tea.InUse, tea.Size)
+	sqlQuery := fmt.Sprintf(`INSERT INTO teas(id, teaName, shopName, shopLocation, temperature, portionWeight, containerWeight, initialWeight, brewingDuration, teaType, color, inUse, size, blendDescription) VALUES('%s', '%s', '%s', '%s', %d, %d, %d, %d, %d, '%s', '%s', %d, '%s', '%s')`, tea.Id, tea.TeaName, tea.Origin.ShopName, tea.Origin.ShopLocation, tea.Temperature, tea.PortionWeight, tea.ContainerWeight, tea.InitialWeight, tea.BrewingDuration, tea.TeaType, tea.Color, tea.InUse, tea.Size, tea.BlendDescription)
 
 	var err error
 
@@ -107,8 +108,8 @@ func updateTea(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &updatedTea)
 
 	sqlQuery := fmt.Sprintf(
-		`UPDATE teas SET teaName = '%s', teaType = '%s', shopName = '%s', shopLocation = '%s', temperature = '%d', portionWeight = '%d', containerWeight = '%d', initialWeight = '%d', brewingDuration = '%d' WHERE id = '%s'`,
-		updatedTea.TeaName, updatedTea.TeaType, updatedTea.Origin.ShopName, updatedTea.Origin.ShopLocation, updatedTea.Temperature, updatedTea.PortionWeight, updatedTea.ContainerWeight, updatedTea.InitialWeight, updatedTea.BrewingDuration, id)
+		`UPDATE teas SET teaName = '%s', teaType = '%s', shopName = '%s', shopLocation = '%s', temperature = '%d', portionWeight = '%d', containerWeight = '%d', initialWeight = '%d', brewingDuration = '%d', teaType = '%s', color = '%s', inUse = '%d', size = '%s', blendDescription = '%s' WHERE id = '%s'`,
+		updatedTea.TeaName, updatedTea.TeaType, updatedTea.Origin.ShopName, updatedTea.Origin.ShopLocation, updatedTea.Temperature, updatedTea.PortionWeight, updatedTea.ContainerWeight, updatedTea.InitialWeight, updatedTea.BrewingDuration, updatedTea.TeaType, updatedTea.Color, updatedTea.InUse, updatedTea.Size, updatedTea.BlendDescription, id)
 
 	database.Exec(sqlQuery)
 

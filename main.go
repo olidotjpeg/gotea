@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/olidotjpeg/gotea/packages/handlers"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -15,11 +13,11 @@ func main() {
 
 	var err error
 
-	handlers.Database, err = sql.Open("sqlite3", "./gotea.sqlite")
+	Database, err = sql.Open("sqlite3", "./gotea.sqlite")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer handlers.Database.Close()
+	defer Database.Close()
 
-	handlers.HandleRequests()
+	HandleRequests()
 }

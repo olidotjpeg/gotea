@@ -1,4 +1,4 @@
-module teamate
+module github.com/olidotjpeg/gotea
 
 go 1.18
 

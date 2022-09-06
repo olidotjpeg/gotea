@@ -9,7 +9,7 @@
                 {#each teas as tea}
                     <li>
                         <a class="tea-link" href="/#/tea/{tea.id}">{tea.id}</a>
-                        <form class="admin-form">
+                        <form class="admin-form" on:submit={(event) => doPUT(event)}>
                             <input type="hidden" name="teaId" value="{tea.id}">
                             <input type="text" name="teaName" value="{tea.teaName}" placeholder="Tea Name">
                             <input type="text" name="teaType" value="{tea.teaType}" placeholder="Tea Type">
@@ -26,7 +26,7 @@
                             <textarea  name="blendDescription" value={tea.blendDescription} rows="3" placeholder="Blend Description"></textarea>
 
                             <input type="submit" value="Submit">
-                            <button type="button">Delete</button>
+                            <button on:click|preventDefault={(event) => doDelete(tea.id)} type="button">Delete</button>
                         </form>
                         {tea.teaName}
                     </li>
@@ -55,11 +55,81 @@
 </main>
 
 <script lang="ts">
-    import type {Tea} from '../interfaces';
+    import type {Tea, Origin} from '../interfaces';
 
     let teas: Tea[] = [];
 
     fetch('http://localhost:8000/teas').then((res) => res.json()).then((data) => teas = data);
+
+    function doDelete(id: string) {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        };
+        fetch(`/tea/${id}`, requestOptions)
+            .then(response => response.json())
+            .then(data => console.log(data) );
+    }
+
+    function doPUT(event: SubmitEvent) {
+        event.preventDefault();
+        const eventTarget: any = event.target;
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                "origin": {
+                    "shopName": eventTarget.elements.shopName.value,
+                    "shopLocation": eventTarget.elements.shopLocation.value
+                },
+                "temperature": parseInt(eventTarget.elements.temperature.value),
+                "portionWeight": parseInt(eventTarget.elements.portionWeight.value),
+                "containerWeight": parseInt(eventTarget.elements.containerWeight.value),
+                "initialWeight": parseInt(eventTarget.elements.initialWeight.value),
+                "brewingDuration": parseInt(eventTarget.elements.brewingDuration.value),
+                "teaName": eventTarget.elements.teaName.value,
+                "teaType": eventTarget.elements.teaType.value,
+                "color": eventTarget.elements.color.value,
+                "size": eventTarget.elements.size.value,
+                "inUse": parseInt(eventTarget.elements.inUse.value),
+                "blendDescription": eventTarget.elements.blendDescription.value
+            })
+        };
+        fetch(`/tea/${eventTarget.elements.teaId.value}`, requestOptions)
+            .then(response => response.json())
+            .then(data => console.log(data) );
+    }
+
+    function createNewTea(event) {
+        event.preventDefault();
+        const postForm = document.getElementById('postForm') as HTMLFormElement;
+        const formedData = new FormData(postForm);
+        let postObj = {} as Tea;
+        let origin = {} as Origin;
+
+        for (const [key, value] of formedData) {
+            if(key === 'shopName' || key === 'shopLocation') {
+                origin[key] = value;
+                postObj.origin = origin;
+            }
+            if (key === 'temperature' || key === 'containerWeight' || key === 'initialWeight' || key === 'portionWeight' || key === 'brewingDuration' || key === 'inUse') {
+                postObj[key] = parseInt(value);
+            } else {
+                postObj[key] = value;
+            }
+        }
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postObj)
+        };
+
+        fetch('/tea', requestOptions)
+            .then(response => response.json())
+            .then(data => console.log(data) );
+    }
 </script>
 
 <style>

@@ -34,9 +34,9 @@
             </ul>
         </div>
 
-        <!-- <div class="container">
+        <div class="container">
             <h4>Add new Teas here</h4>
-            <form onsubmit="createNewTea(event)" class="admin-form" id="postForm">
+            <form on:submit|preventDefault={createNewTea} class="admin-form" id="postForm">
                 <input name="teaName" placeholder="Tea Name" type="text" />
                 <input name="shopName" placeholder="Shop Name" type="text" />
                 <input name="shopLocation" placeholder="Shop Location" type="text" />
@@ -50,7 +50,7 @@
                 <input name="inUse" placeholder="In Use? (1, 0)" type="text" />
                 <input type="submit" />
             </form>
-        </div> -->
+        </div>
     </div>
 </main>
 
@@ -59,7 +59,11 @@
 
     let teas: Tea[] = [];
 
-    fetch('http://localhost:8000/teas').then((res) => res.json()).then((data) => teas = data);
+    fetch('http://localhost:8000/teas').then((res) => res.json()).then((data) => {
+        if (data) {
+            teas = data
+        }
+    });
 
     function doDelete(id: string) {
         const requestOptions = {
@@ -72,11 +76,13 @@
     }
 
     function doPUT(event: SubmitEvent) {
+        console.log(event);
         event.preventDefault();
         const eventTarget: any = event.target;
 
         const requestOptions = {
             method: 'PUT',
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 "origin": {
@@ -96,13 +102,12 @@
                 "blendDescription": eventTarget.elements.blendDescription.value
             })
         };
-        fetch(`/tea/${eventTarget.elements.teaId.value}`, requestOptions)
+        fetch(`http://localhost:8000/tea/${eventTarget.elements.teaId.value}`, requestOptions)
             .then(response => response.json())
             .then(data => console.log(data) );
     }
 
-    function createNewTea(event) {
-        event.preventDefault();
+    function createNewTea() {
         const postForm = document.getElementById('postForm') as HTMLFormElement;
         const formedData = new FormData(postForm);
         let postObj = {} as Tea;
@@ -122,13 +127,15 @@
 
         const requestOptions = {
             method: 'POST',
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(postObj)
         };
 
-        fetch('/tea', requestOptions)
+        fetch('http://localhost:8000/tea', requestOptions)
             .then(response => response.json())
-            .then(data => console.log(data) );
+            .then(data => console.log(data) )
+            .catch(e => console.log(e);
     }
 </script>
 

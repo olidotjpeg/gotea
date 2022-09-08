@@ -59,7 +59,9 @@
 
     let teas: Tea[] = [];
 
-    fetch('http://localhost:8000/teas').then((res) => res.json()).then((data) => {
+    fetch('http://localhost:8000/teas', {
+        mode: 'cors' as RequestMode
+    }).then((res) => res.json()).then((data) => {
         if (data) {
             teas = data
         }
@@ -76,13 +78,12 @@
     }
 
     function doPUT(event: SubmitEvent) {
-        console.log(event);
         event.preventDefault();
         const eventTarget: any = event.target;
 
         const requestOptions = {
             method: 'PUT',
-            mode: 'cors',
+            mode: 'cors' as RequestMode,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 "origin": {
@@ -104,7 +105,7 @@
         };
         fetch(`http://localhost:8000/tea/${eventTarget.elements.teaId.value}`, requestOptions)
             .then(response => response.json())
-            .then(data => console.log(data) );
+            .then(data => console.log(data));
     }
 
     function createNewTea() {
@@ -127,15 +128,15 @@
 
         const requestOptions = {
             method: 'POST',
-            mode: 'cors',
+            mode: 'cors' as RequestMode,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(postObj)
         };
 
         fetch('http://localhost:8000/tea', requestOptions)
             .then(response => response.json())
-            .then(data => console.log(data) )
-            .catch(e => console.log(e);
+            .then(data => console.log(data))
+            .catch(e => console.log(e));
     }
 </script>
 

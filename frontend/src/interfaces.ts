@@ -12,6 +12,7 @@ export interface Tea {
     size: string;
     teaType: string;
     temperature: number;
+    link?: string;
 }
 
 export interface Origin {

@@ -9,7 +9,7 @@
                 {#each teas as tea}
                     <li>
                         <a class="tea-link" href="/#/tea/{tea.id}">{tea.id}</a>
-                        <form class="admin-form" on:submit={(event) => doPUT(event)}>
+                        <form class="admin-form" on:submit|preventDefault={(event) => doPUT(event)}>
                             <input type="hidden" name="teaId" value="{tea.id}">
                             <input type="text" name="teaName" value="{tea.teaName}" placeholder="Tea Name">
                             <input type="text" name="teaType" value="{tea.teaType}" placeholder="Tea Type">
@@ -26,7 +26,7 @@
                             <textarea  name="blendDescription" value={tea.blendDescription} rows="3" placeholder="Blend Description"></textarea>
 
                             <input type="submit" value="Submit">
-                            <button on:click|preventDefault={(event) => doDelete(tea.id)} type="button">Delete</button>
+                            <button on:click|preventDefault={() => doDelete(tea.id)} type="button">Delete</button>
                         </form>
                         {tea.teaName}
                     </li>
@@ -55,6 +55,7 @@
 </main>
 
 <script lang="ts">
+    import QRCode from 'qrcode';
     import type {Tea, Origin} from '../interfaces';
 
     let teas: Tea[] = [];
@@ -72,13 +73,15 @@
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         };
-        fetch(`/tea/${id}`, requestOptions)
+        fetch(`http://localhost:8000/tea/${id}`, requestOptions)
             .then(response => response.json())
-            .then(data => console.log(data) );
+            .then(data => {
+                console.log(data)
+                location.reload();
+            });
     }
 
     function doPUT(event: SubmitEvent) {
-        event.preventDefault();
         const eventTarget: any = event.target;
 
         const requestOptions = {

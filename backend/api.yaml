@@ -1,0 +1,134 @@
+swagger: '2.0'
+info:
+  description: Documentation for the GoTea API
+  version: 1.0.0
+  title: GoTea API
+  # put the contact info for your development or API team
+  contact:
+    email: hello@stenkil.de
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+  - name: Teas
+    description: Operations available to regular developers
+
+paths:
+  /teas:
+    get:
+      tags:
+        - Teas
+      summary: Get all available teas
+      operationId: getTeas
+      description: |
+        Get all teas availeble on our shelves
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: All Teas
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TeaObject'
+        "404":
+          description: No teas
+  /tea:
+    post:
+      tags:
+        - Teas
+      summary: Add a new tea container to the shelf
+      operationId: createNewTea
+      description: Creates a new item in the database for the new tea added and generates a QR code.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: teaObject
+          description: Tea Object to add
+          schema:
+            $ref: '#/definitions/TeaObject'
+      responses:
+        "201":
+          description: tea created
+        "400":
+          description: invalid input, object invalid
+        "409":
+          description: an existing item already exists
+    put:
+      tags:
+        - Teas
+      summary: Update a tea on the shelf, with a new type
+      operationId: updateTea
+      description: Changes the tea in a specific container to a new fresh one.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: teaObject
+          description: Tea Object to add
+          schema:
+            $ref: '#/definitions/TeaObject'
+      responses:
+        "201":
+          description: tea created
+        "400":
+          description: invalid input, object invalid
+        "409":
+          description: an existing item already exists
+
+definitions:
+  TeaObject:
+    type: object
+    required:
+      - id
+      - temperature
+      - portionWeight
+      - initialWeight
+      - brewingDuration
+      - origin
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      temperature:
+        type: integer
+        example: 50
+      portionWeight:
+        type: integer
+        example: 100
+      initialWeight:
+        type: integer
+        example: 100
+      brewingDuration:
+        type: integer
+        example: 100
+      origin:
+        $ref: '#/definitions/TeaOrigin'
+  TeaOrigin:
+    required:
+      - shopName
+      - shopLocation
+    properties:
+      shopName:
+        type: string
+        example: AC Perchs
+      shopLocation:
+        type: string
+        example: Copenhagen
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /olidotjpeg/gotea/1.0.0
+# schemes:
+#  - http
+# Added by API Auto Mocking Plugin
+schemes:
+  - https

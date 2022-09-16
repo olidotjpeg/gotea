@@ -7,6 +7,7 @@ COPY go.sum ./
 
 RUN go mod download
 
+COPY gotea.sqlite ./
 COPY *.go ./
 
 RUN go build -o /backend

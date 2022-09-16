@@ -1,0 +1,21 @@
+version: '3'
+services:
+
+  gotea-backend:
+    build: ./backend
+    container_name: gotea-backend
+    # environment:
+    ports:
+      - 8000:8000
+
+  gotea-frontend:
+    build: ./frontend
+    container_name: gotea-frontend
+    ports:
+      - 5173:80
+    links:
+      - gotea-backend
+
+
+volumes:
+  gotea-data:

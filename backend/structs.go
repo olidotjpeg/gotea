@@ -20,3 +20,8 @@ type Tea struct {
 	InUse            int    `json:"inUse" sql:"InUse"`
 	BlendDescription string `json:"blendDescription" sql:"BlendDescription"`
 }
+
+type TeaStatus struct {
+	Active   []interface{} `json:"active"`
+	Inactive []interface{} `json:"inactive"`
+}

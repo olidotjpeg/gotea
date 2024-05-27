@@ -1,14 +1,20 @@
+# Stage 1: Base image with dependencies
+FROM node:20.13.1-bookworm AS base
 
-### STAGE 1: Build ###
-FROM node:16-alpine AS build
-WORKDIR /usr/src/app
-COPY package.json ./
+# Set the working directory
+WORKDIR /frontend
+
+# Copy package.json and package-lock.json to the working directory
+COPY package.json package-lock.json ./
+
+# Install dependencies
 RUN npm install
-COPY . .
-RUN npm run build
 
-### STAGE 2: Run ###
-FROM nginx:1.17.1-alpine
-COPY default.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /usr/src/app/dist/ /usr/share/nginx/html
-EXPOSE 80
+# Copy the rest of the application code to the working directory
+COPY . .
+
+# Stage 2: Development image
+FROM base AS devfrontend
+
+# Set the entrypoint to list the contents of the root directory
+ENTRYPOINT ["npm", "run", "dev"]

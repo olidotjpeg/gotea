@@ -1,21 +1,41 @@
-version: '3'
 services:
-
   gotea-backend:
-    build: ./backend
-    container_name: gotea-backend
-    # environment:
-    ports:
-      - 8000:8000
-
-  gotea-frontend:
-    build: ./frontend
+      container_name: gotea-backend
+      build:
+          context: ./backend
+          dockerfile: Dockerfile
+          target: dev
+      volumes:
+        - backend-data:/build
+      ports:
+          - 8000:8000
+      restart: always
+  web:
     container_name: gotea-frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: devfrontend
+    volumes:
+      - frontend-data:/frontend
+    depends_on:
+        - gotea-backend
+    ports: 
+        - 5173:5173
+    restart: always
+  postgres:
+    image: postgres:latest
+    container_name: gotea-postgres
     ports:
-      - 5173:80
-    links:
-      - gotea-backend
-
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
 volumes:
-  gotea-data:
+  backend-data:
+  frontend-data:
+  postgres-data:

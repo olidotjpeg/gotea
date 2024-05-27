@@ -19,14 +19,16 @@ func getTeas(w http.ResponseWriter, r *http.Request) {
 
 	defer rows.Close()
 
-	var teas []Tea
+	teas := []Tea{}
 
 	for rows.Next() {
 		var tea Tea
 		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size, &tea.BlendDescription)
 		if err != nil {
+			fmt.Printf("print: %v\n", "empty line weeh")
 			return
 		}
+
 		teas = append(teas, tea)
 	}
 

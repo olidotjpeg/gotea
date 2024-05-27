@@ -19,14 +19,16 @@ func getTeas(w http.ResponseWriter, r *http.Request) {
 
 	defer rows.Close()
 
-	var teas []Tea
+	teas := []Tea{}
 
 	for rows.Next() {
 		var tea Tea
 		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size, &tea.BlendDescription)
 		if err != nil {
+			fmt.Printf("print: %v\n", "empty line weeh")
 			return
 		}
+
 		teas = append(teas, tea)
 	}
 
@@ -96,4 +98,35 @@ func deleteTea(w http.ResponseWriter, r *http.Request) {
 	Database.Exec("DELETE FROM teas WHERE id = ?", id)
 
 	json.NewEncoder(w).Encode("Teas Deleted")
+}
+
+func getTeaStatus(w http.ResponseWriter, r *http.Request) {
+	rows, err := Database.Query("SELECT * FROM teas")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var teas []Tea
+	var teaStatus TeaStatus
+
+	for rows.Next() {
+		var tea Tea
+		err := rows.Scan(&tea.TeaName, &tea.Origin.ShopName, &tea.Origin.ShopLocation, &tea.Temperature, &tea.PortionWeight, &tea.ContainerWeight, &tea.InitialWeight, &tea.BrewingDuration, &tea.Id, &tea.TeaType, &tea.Color, &tea.InUse, &tea.Size, &tea.BlendDescription)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		teas = append(teas, tea)
+	}
+
+	for _, tea := range teas {
+		if tea.InUse != 0 {
+			teaStatus.Active = append(teaStatus.Active, tea)
+		}
+		teaStatus.Inactive = append(teaStatus.Inactive, tea)
+	}
+
+	json.NewEncoder(w).Encode(teaStatus)
 }

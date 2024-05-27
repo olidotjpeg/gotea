@@ -15,6 +15,7 @@ var Database *sql.DB
 func HandleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/teas", getTeas).Methods(http.MethodGet)
+	myRouter.HandleFunc("/teas/status", getTeaStatus).Methods(http.MethodGet)
 	// NOTE: Ordering is important here! This has to be defined before
 	// the other `/tea` endpoint.
 	myRouter.HandleFunc("/tea", createNewTea).Methods(http.MethodPost, http.MethodOptions)

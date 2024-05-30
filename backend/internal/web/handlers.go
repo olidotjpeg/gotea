@@ -13,6 +13,8 @@ import (
 var Database *sql.DB
 
 func HandleRequests() {
+	databaseInit()
+
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/teas", getTeas).Methods(http.MethodGet)
 	myRouter.HandleFunc("/teas/status", getTeaStatus).Methods(http.MethodGet)
@@ -28,7 +30,7 @@ func HandleRequests() {
 		AllowedHeaders: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
 		// Enable Debugging for testing, consider disabling in production
-		Debug: true,
+		Debug: false,
 	})
 
 	srv := &http.Server{
@@ -40,4 +42,5 @@ func HandleRequests() {
 	}
 
 	log.Fatal(srv.ListenAndServe())
+	defer pool.Close()
 }

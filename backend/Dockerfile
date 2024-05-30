@@ -19,9 +19,6 @@ COPY cmd ./cmd
 COPY go.mod .
 COPY go.sum .
 
-RUN cat go.mod
-
-RUN go mod tidy
 RUN go mod download
 
 ENTRYPOINT ["air", "-c", "/air.toml"]

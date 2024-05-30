@@ -22,3 +22,5 @@ frontend/node_modules
 
 # Go workspace file
 go.work
+
+backend/tmp
